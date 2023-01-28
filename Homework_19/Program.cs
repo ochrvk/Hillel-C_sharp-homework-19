@@ -12,7 +12,7 @@ class Program
     static void Transfer(Account account1, Account account2)
     {
         int amount = 2000000;
-        if (account1.Balance == amount)
+        if (account1.Balance >= amount)
         {
             List<Task> tasks = new List<Task>();
             object locker = new object();
