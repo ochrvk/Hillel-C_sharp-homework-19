@@ -11,37 +11,47 @@ class Program
 {
     static void Transfer(Account account1, Account account2)
     {
-        List<Task> tasks = new List<Task>();
-        object locker = new object();
-
-        for (int j = 0; j < 2; j++)
+        int amount = 2000000;
+        if (account1.Balance == amount)
         {
-            tasks.Add(Task.Run(() =>
+            List<Task> tasks = new List<Task>();
+            object locker = new object();
+
+            for (int j = 0; j < 2; j++)
             {
-                for (int i = 0; i < 1000000; i++)
+                tasks.Add(Task.Run(() =>
                 {
-                    lock (locker)
+                    for (int i = 0; i < 1000000; i++)
                     {
-                        account1.Balance--;
-                        account2.Balance++;
+                        lock (locker)
+                        {
+                            account1.Balance--;
+                            account2.Balance++;
+                        }
                     }
-                }
-            }));
+                }));
+            }
+            //Thanks for this ;)
+            Task.WaitAll(tasks.ToArray());
         }
-        //Thanks for this ;)
-        Task.WaitAll(tasks.ToArray());
+        else
+        {
+            Console.WriteLine("Not enough money. Transfer failed.");
+            return;
+        }
+
     }
 
     static void Main(string[] args)
     {
-
         Account account1 = new Account();
-        account1.Balance = 2000000;
+        account1.Balance = 0;
         account1.Id = 100;
 
         Account account2 = new Account();
         account2.Balance = 0;
         account2.Id = 200;
+
 
         Console.WriteLine("Before transfer: ");
         Console.WriteLine($"счет {account1.Id}: {account1.Balance}");
